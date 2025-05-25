@@ -1,25 +1,66 @@
+using API.Extensions;
+using Serilog;
+using Serilog.Events;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configurar Serilog 
+ConfigureLogger();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Usar Serilog como provider de logging
+builder.Host.UseSerilog();
+
+// Adicionar serviços ao container
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+// Configurar serviços da aplicação
+builder.Services
+    .AddControllersConfiguration()  
+    .AddSwaggerConfiguration()
+    .AddMappingConfiguration()
+    .AddValidationConfiguration()
+    .AddSqlConfiguration()
+    .AddRedisConfiguration(builder.Configuration)
+    .AddRateLimitingConfiguration()
+    .AddHealthChecksConfiguration(builder.Configuration)
+    .AddRepositoryConfiguration()
+    .AddServiceConfiguration()
+    .AddCorsConfiguration()
+    .AddAuthenticationConfiguration(builder.Configuration);
+
+// Construir o aplicativo
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Configurar pipeline de requisições
+app.ConfigureApplicationPipeline(app.Environment);
+
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Log.Information("Iniciando aplicação...");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Erro fatal ao iniciar o aplicativo");
+}
+finally
+{
+    Log.CloseAndFlush();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+// Configuração do logger
+void ConfigureLogger()
+{
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Debug()
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .Enrich.FromLogContext()
+        .Enrich.WithProperty("Application", "API ERP")
+        .WriteTo.Console()
+        .WriteTo.File("Logs/myapp-.log",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 25,
+            fileSizeLimitBytes: 10_000_000,
+            rollOnFileSizeLimit: true)
+        .CreateLogger();
+}
