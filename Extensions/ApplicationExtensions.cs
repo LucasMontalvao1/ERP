@@ -1,4 +1,6 @@
 ﻿using API.Middlewares;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Text.Json;
 
 namespace API.Extensions
 {
@@ -39,7 +41,39 @@ namespace API.Extensions
 
             app.MapControllers();
 
-            app.MapHealthChecks("/health");
+            // Health Check endpoint DETALHADO
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                ResponseWriter = async (context, report) =>
+                {
+                    context.Response.ContentType = "application/json";
+
+                    var response = new
+                    {
+                        status = report.Status.ToString(),
+                        totalDuration = report.TotalDuration.ToString(@"hh\:mm\:ss\.fff"),
+                        entries = report.Entries.ToDictionary(
+                            entry => entry.Key,
+                            entry => new
+                            {
+                                status = entry.Value.Status.ToString(),
+                                duration = entry.Value.Duration.ToString(@"hh\:mm\:ss\.fff"),
+                                description = entry.Value.Description,
+                                data = entry.Value.Data
+                            }
+                        )
+                    };
+
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    }));
+                }
+            });
+
+            // Health Check simples (para Docker health check)
+            app.MapHealthChecks("/health/ready");
 
             return app;
         }

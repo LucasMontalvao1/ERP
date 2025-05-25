@@ -11,7 +11,7 @@ namespace API.Extensions
             services.AddHealthChecks()
                 .AddMySql(configuration.GetConnectionString("ConfiguracaoPadrao")!)
                 .AddRedis(configuration.GetConnectionString("Redis")!)
-                .AddCheck("api", () => HealthCheckResult.Healthy("API está funcionando"));
+                .AddCheck("api", () => HealthCheckResult.Healthy("API esta funcionando (onlineeee)"));
 
             return services;
         }

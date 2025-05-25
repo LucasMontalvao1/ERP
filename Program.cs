@@ -23,6 +23,7 @@ builder.Services
     .AddRedisConfiguration(builder.Configuration)
     .AddRateLimitingConfiguration()
     .AddHealthChecksConfiguration(builder.Configuration)
+    .AddPrometheusMetrics()
     .AddRepositoryConfiguration()
     .AddServiceConfiguration()
     .AddCorsConfiguration()
@@ -32,7 +33,8 @@ builder.Services
 var app = builder.Build();
 
 // Configurar pipeline de requisições
-app.ConfigureApplicationPipeline(app.Environment);
+app.ConfigureApplicationPipeline(app.Environment)
+   .UsePrometheusMetrics();
 
 try
 {
