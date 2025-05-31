@@ -1,5 +1,4 @@
 ﻿apiVersion: 1
-
 providers:
   - name: 'default'
     orgId: 1
@@ -7,5 +6,7 @@ providers:
     type: file
     disableDeletion: false
     editable: true
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
     options:
-      path: /etc/grafana/provisioning/dashboards
+      path: /etc/grafana/provisioning/dashboards/dashboard-files

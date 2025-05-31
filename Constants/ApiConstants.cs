@@ -227,5 +227,37 @@
             public const string DataExported = "DATA_EXPORTED";
             public const string SystemConfigChanged = "SYSTEM_CONFIG_CHANGED";
         }
+        public static class Auth
+        {
+            public static class Messages
+            {
+                public const string LoginSuccess = "Login realizado com sucesso";
+                public const string LoginFailed = "Login ou senha inválidos";
+                public const string UserLocked = "Usuário temporariamente bloqueado devido a múltiplas tentativas inválidas";
+                public const string UserInactive = "Usuário inativo";
+                public const string TokenRefreshed = "Token renovado com sucesso";
+                public const string TokenInvalid = "Token inválido ou expirado";
+                public const string LogoutSuccess = "Logout realizado com sucesso";
+                public const string TokenValidated = "Token válido";
+                public const string PasswordChanged = "Senha alterada com sucesso";
+                public const string FirstAccess = "Primeiro acesso detectado. Altere sua senha.";
+            }
+
+            public static class CacheKeys
+            {
+                public static string RefreshToken(string token) => $"{CachePrefixes.Authentication}refresh_token:{token}";
+                public static string BlacklistToken(string jti) => $"{CachePrefixes.Authentication}blacklist:{jti}";
+                public static string UserLock(string login) => $"{CachePrefixes.Authentication}lock:{login}";
+                public static string LoginAttempts(string login) => $"{CachePrefixes.Authentication}attempts:{login}";
+                public static string UserSession(int userId) => $"{CachePrefixes.Authentication}session:{userId}";
+            }
+
+            public static class ClaimTypes
+            {
+                public const string UserId = "user_id";
+                public const string Login = "login";
+                public const string FirstAccess = "first_access";
+            }
+        }
     }
 }

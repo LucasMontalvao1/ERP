@@ -41,10 +41,22 @@
 	<ItemGroup>
 		<EmbeddedResource Include="SQL\**\*.sql" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="SQL\Auth\CheckEmailExists.sql" />
+	  <None Remove="SQL\Auth\CheckLoginExists.sql" />
+	  <None Remove="SQL\Auth\GetUsuarioByEmail.sql" />
+	  <None Remove="SQL\Auth\GetUsuarioByLogin.sql" />
+	  <None Remove="SQL\Auth\GetUsuarioRoles.sql" />
+	  <None Remove="SQL\Auth\GetUsuariosAtivos.sql" />
+	  <None Remove="SQL\Auth\IncrementTentativasLogin.sql" />
+	  <None Remove="SQL\Auth\LogTentativaLogin.sql" />
+	  <None Remove="SQL\Auth\ResetTentativasLogin.sql" />
+	  <None Remove="SQL\Auth\UpdatePrimeiroAcesso.sql" />
+	  <None Remove="SQL\Auth\UpdateSenha.sql" />
+	  <None Remove="SQL\Auth\UpdateUltimoLogin.sql" />
+	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Models\DTOs\" />
-		<Folder Include="SQL\" />
 		<Folder Include="Logs\" />
 	</ItemGroup>
 </Project>

@@ -53,7 +53,7 @@ namespace API.Extensions
                 // Configuração para autenticação JWT no Swagger
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = @"Digite seu token no campo abaixo. Exemplo: 'Bearer 12345abcdef'",
+                    Description = @"Digite seu token no campo abaixo. Exemplo: 'DlHPFGcvUqHQSw+BNFQfASg=='",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
@@ -232,47 +232,6 @@ namespace API.Extensions
             return services;
         }
 
-        /// <summary>
-        /// Adiciona configuração de autenticação JWT
-        /// </summary>
-        public static IServiceCollection AddAuthenticationConfiguration(
-            this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            var jwtKey = configuration["Jwt:Key"];
-
-            if (string.IsNullOrEmpty(jwtKey))
-            {
-                throw new InvalidOperationException("JWT Key não está configurada no appsettings.json");
-            }
-
-            var key = Encoding.UTF8.GetBytes(jwtKey);
-            var issuer = configuration["Jwt:Issuer"];
-            var audience = configuration["Jwt:Audience"];
-
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = !string.IsNullOrEmpty(issuer),
-                    ValidIssuer = issuer,
-                    ValidateAudience = !string.IsNullOrEmpty(audience),
-                    ValidAudience = audience,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
-
-            return services;
-        }
 
         /// <summary>
         /// Implementação de cache nulo para quando cache está desabilitado
