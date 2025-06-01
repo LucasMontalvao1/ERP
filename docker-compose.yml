@@ -53,6 +53,27 @@
       start_period: 30s
     restart: unless-stopped
 
+  mysql-backup:
+    image: fradelg/mysql-cron-backup
+    container_name: mysql_backup_montalvao
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASS=asd123
+      - MYSQL_DB=bdprod
+      - CRON_TIME=0 2 * * *        # Faz backup todo dia às 2h da manhã
+      - MAX_BACKUPS=10             # Mantém os 10 backups mais recentes
+      - GZIP_LEVEL=9               # Compactação máxima
+      - TZ=America/Sao_Paulo       # Ajuste de fuso horário
+    volumes:
+      - ./backups:/backup          # Pasta local onde os backups serão salvos
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+
   redis:
     image: redis:7-alpine
     container_name: redis_montalvao
