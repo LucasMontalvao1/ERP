@@ -1,0 +1,1 @@
+﻿SELECT * FROM filas_processamento ORDER BY prioridade, data_criacao;

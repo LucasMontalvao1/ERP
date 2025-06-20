@@ -1,6 +1,6 @@
 ﻿SELECT r.nome
-FROM usuario_roles ur
-INNER JOIN roles r ON ur.role_id = r.id
-WHERE ur.usuario_id = @usuario_id
+FROM usuarioRoles ur
+INNER JOIN roles r ON ur.roleid = r.id
+WHERE ur.usuarioid = @usuarioid
     AND r.ativo = 1
 ORDER BY r.nome;

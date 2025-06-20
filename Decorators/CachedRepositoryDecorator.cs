@@ -43,7 +43,6 @@ namespace API.Decorators
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao processar cache para a chave: {CacheKey}", cacheKey);
-                // Em caso de erro no cache, executar a função normalmente
                 return await factory();
             }
         }

@@ -1,8 +1,8 @@
 ﻿UPDATE usuarios 
-SET tentativas_login = tentativas_login + 1,
-    data_atualizacao = UTC_TIMESTAMP()
-WHERE id = @usuario_id;
+SET tentativaslogin = tentativaslogin + 1,
+    dataatualizacao = UTC_TIMESTAMP()
+WHERE id = @usuarioid;
 
-SELECT tentativas_login 
+SELECT tentativaslogin 
 FROM usuarios 
-WHERE id = @usuario_id;
+WHERE id = @usuarioid;

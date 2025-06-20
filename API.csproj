@@ -7,16 +7,28 @@
 
 	<ItemGroup>
 		<!-- Validação -->
+		<PackageReference Include="AspNetCore.HealthChecks.Hangfire" Version="8.0.1" />
+		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
+		<PackageReference Include="AutoMapper" Version="14.0.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+
+		<!-- Hangfire -->
+		<PackageReference Include="Hangfire" Version="1.8.20" />
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.20" />
+		<PackageReference Include="Hangfire.Core" Version="1.8.20" />
+		<PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
+		<PackageReference Include="Microsoft.Exchange.WebServices" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.11" />
 
 		<!-- Database -->
 		<PackageReference Include="MySqlConnector" Version="2.4.0" />
+		<PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
 
 		<!-- Logging -->
-		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 
 		<!-- API Documentation -->
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
@@ -42,6 +54,23 @@
 		<EmbeddedResource Include="SQL\**\*.sql" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="SQL\Atividade\BulkUpdateSyncStatus.sql" />
+	  <None Remove="SQL\Atividade\CountPaged.sql" />
+	  <None Remove="SQL\Atividade\Create.sql" />
+	  <None Remove="SQL\Atividade\Delete.sql" />
+	  <None Remove="SQL\Atividade\ExistsByCodAtiv.sql" />
+	  <None Remove="SQL\Atividade\GetAll.sql" />
+	  <None Remove="SQL\Atividade\GetById.sql" />
+	  <None Remove="SQL\Atividade\GetByRamo.sql" />
+	  <None Remove="SQL\Atividade\GetCountByStatus.sql" />
+	  <None Remove="SQL\Atividade\GetFailedSync.sql" />
+	  <None Remove="SQL\Atividade\GetPaged.sql" />
+	  <None Remove="SQL\Atividade\GetPendingSync.sql" />
+	  <None Remove="SQL\Atividade\GetSyncStatistics.sql" />
+	  <None Remove="SQL\Atividade\Search.sql" />
+	  <None Remove="SQL\Atividade\Update.sql" />
+	  <None Remove="SQL\Atividade\UpdateSyncStatus.sql" />
+	  <None Remove="SQL\Atividade\UpdateSyncStatusSuccess.sql" />
 	  <None Remove="SQL\Auth\CheckEmailExists.sql" />
 	  <None Remove="SQL\Auth\CheckLoginExists.sql" />
 	  <None Remove="SQL\Auth\GetUsuarioByEmail.sql" />
@@ -54,6 +83,55 @@
 	  <None Remove="SQL\Auth\UpdatePrimeiroAcesso.sql" />
 	  <None Remove="SQL\Auth\UpdateSenha.sql" />
 	  <None Remove="SQL\Auth\UpdateUltimoLogin.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\CountPaged.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\Create.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\Delete.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\GetActiveConfigs.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\GetActiveConfigsWithEndpoints.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\GetAll.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\GetById.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\GetByName.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\GetDefaultConfig.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\GetPaged.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\SetAsDefault.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\Update.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\UpdateLastConnection.sql" />
+	  <None Remove="SQL\Configuracoes_integracao\UpdateToken.sql" />
+	  <None Remove="SQL\Filas_processamento\CancelItem.sql" />
+	  <None Remove="SQL\Filas_processamento\CleanupProcessedItems.sql" />
+	  <None Remove="SQL\Filas_processamento\Create.sql" />
+	  <None Remove="SQL\Filas_processamento\Delete.sql" />
+	  <None Remove="SQL\Filas_processamento\GetAll.sql" />
+	  <None Remove="SQL\Filas_processamento\GetById.sql" />
+	  <None Remove="SQL\Filas_processamento\GetByPriority.sql" />
+	  <None Remove="SQL\Filas_processamento\GetFailedItems.sql" />
+	  <None Remove="SQL\Filas_processamento\GetItemsByCorrelationId.sql" />
+	  <None Remove="SQL\Filas_processamento\GetPendingItems.sql" />
+	  <None Remove="SQL\Filas_processamento\GetQueueCount.sql" />
+	  <None Remove="SQL\Filas_processamento\GetQueueHealth.sql" />
+	  <None Remove="SQL\Filas_processamento\GetQueueStatistics.sql" />
+	  <None Remove="SQL\Filas_processamento\IncrementAttempts.sql" />
+	  <None Remove="SQL\Filas_processamento\RequeueItem.sql" />
+	  <None Remove="SQL\Filas_processamento\Update.sql" />
+	  <None Remove="SQL\Filas_processamento\UpdateStatus.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\CleanupOldLogs.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\CountPaged.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\Create.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\CreateLog.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\Delete.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetAll.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetByAtividade.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetByCorrelationId.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetById.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetCountByStatus.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetDailyStatistics.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetFailedLogs.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetPaged.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetRecentByStatus.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetStatistics.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\GetStatisticsByOperation.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\Update.sql" />
+	  <None Remove="SQL\Logs_sincronizacao\UpdateLogStatus.sql" />
 	</ItemGroup>
 
 	<ItemGroup>

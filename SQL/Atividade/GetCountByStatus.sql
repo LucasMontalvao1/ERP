@@ -1,0 +1,1 @@
+﻿SELECT COUNT(*) FROM atividades WHERE statussincronizacao = @status;

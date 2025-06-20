@@ -1,0 +1,1 @@
+﻿DELETE FROM logsSincronizacao WHERE id = @id;

@@ -43,7 +43,7 @@ public static class AuthExtensions
         })
         .AddJwtBearer(options =>
         {
-            options.RequireHttpsMetadata = false; // Para desenvolvimento
+            options.RequireHttpsMetadata = false; 
             options.SaveToken = true;
             options.TokenValidationParameters = new TokenValidationParameters
             {

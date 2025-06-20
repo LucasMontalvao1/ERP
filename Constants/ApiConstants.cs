@@ -55,6 +55,8 @@
             public const string Default = "ApiPolicy";
             public const string Authentication = "AuthPolicy";
             public const string Public = "PublicPolicy";
+            public const string TokenRefresh = "TokenRefresh";
+            public const string PasswordChange = "PasswordChange";
         }
 
         /// <summary>

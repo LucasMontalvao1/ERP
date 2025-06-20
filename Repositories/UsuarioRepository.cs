@@ -29,14 +29,14 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
             Nome = row["nome"].ToString() ?? "",
             Login = row["login"].ToString() ?? "",
             Email = row["email"].ToString() ?? "",
-            SenhaHash = row["senha_hash"].ToString() ?? "",
+            SenhaHash = row["senhahash"].ToString() ?? "",
             Ativo = Convert.ToBoolean(row["ativo"]),
-            DataCriacao = Convert.ToDateTime(row["data_criacao"]),
-            DataAtualizacao = row["data_atualizacao"] != DBNull.Value ? Convert.ToDateTime(row["data_atualizacao"]) : null,
-            UltimoLogin = row["ultimo_login"] != DBNull.Value ? Convert.ToDateTime(row["ultimo_login"]) : null,
-            TentativasLogin = Convert.ToInt32(row["tentativas_login"]),
-            DataBloqueio = row["data_bloqueio"] != DBNull.Value ? Convert.ToDateTime(row["data_bloqueio"]) : null,
-            PrimeiroAcesso = Convert.ToBoolean(row["primeiro_acesso"])
+            DataCriacao = Convert.ToDateTime(row["datacriacao"]),
+            DataAtualizacao = row["dataatualizacao"] != DBNull.Value ? Convert.ToDateTime(row["dataatualizacao"]) : null,
+            UltimoLogin = row["ultimologin"] != DBNull.Value ? Convert.ToDateTime(row["ultimologin"]) : null,
+            TentativasLogin = Convert.ToInt32(row["tentativaslogin"]),
+            DataBloqueio = row["databloqueio"] != DBNull.Value ? Convert.ToDateTime(row["databloqueio"]) : null,
+            PrimeiroAcesso = Convert.ToBoolean(row["primeiroacesso"])
         };
     }
 
@@ -47,10 +47,10 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
             new MySqlParameter("@nome", entity.Nome),
             new MySqlParameter("@login", entity.Login),
             new MySqlParameter("@email", entity.Email),
-            new MySqlParameter("@senha_hash", entity.SenhaHash),
+            new MySqlParameter("@senhahash", entity.SenhaHash),
             new MySqlParameter("@ativo", entity.Ativo),
-            new MySqlParameter("@data_criacao", entity.DataCriacao),
-            new MySqlParameter("@primeiro_acesso", entity.PrimeiroAcesso)
+            new MySqlParameter("@datacriacao", entity.DataCriacao),
+            new MySqlParameter("@primeiroacesso", entity.PrimeiroAcesso)
         };
     }
 
@@ -63,8 +63,8 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
             new MySqlParameter("@login", entity.Login),
             new MySqlParameter("@email", entity.Email),
             new MySqlParameter("@ativo", entity.Ativo),
-            new MySqlParameter("@data_atualizacao", DateTime.UtcNow),
-            new MySqlParameter("@primeiro_acesso", entity.PrimeiroAcesso)
+            new MySqlParameter("@dataatualizacao", DateTime.UtcNow),
+            new MySqlParameter("@primeiroacesso", entity.PrimeiroAcesso)
         };
     }
 
@@ -77,7 +77,7 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/GetUsuarioByLogin.sql");
+            var sql = _sqlLoader.GetQuery("Auth", "GetUsuarioByLogin");
             var dataTable = await _databaseService.ExecuteQueryAsync(sql, new[] { new MySqlParameter("@login", login) });
 
             if (dataTable.Rows.Count == 0)
@@ -96,7 +96,7 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/GetUsuarioByEmail.sql");
+            var sql = _sqlLoader.GetQuery("Auth", "GetUsuarioByEmail");
             var dataTable = await _databaseService.ExecuteQueryAsync(sql, new[] { new MySqlParameter("@email", email) });
 
             if (dataTable.Rows.Count == 0)
@@ -115,8 +115,8 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/GetUsuarioRoles.sql");
-            var dataTable = await _databaseService.ExecuteQueryAsync(sql, new[] { new MySqlParameter("@usuario_id", usuarioId) });
+            var sql = _sqlLoader.GetQuery("Auth", "GetUsuarioRoles");
+            var dataTable = await _databaseService.ExecuteQueryAsync(sql, new[] { new MySqlParameter("@usuarioid", usuarioId) });
 
             var roles = new List<string>();
             foreach (DataRow row in dataTable.Rows)
@@ -137,11 +137,11 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/UpdateUltimoLogin.sql");
+            var sql = _sqlLoader.GetQuery("Auth", "UpdateUltimoLogin");
             await _databaseService.ExecuteNonQueryAsync(sql, new[]
             {
-                new MySqlParameter("@usuario_id", usuarioId),
-                new MySqlParameter("@ultimo_login", DateTime.UtcNow)
+                new MySqlParameter("@usuarioid", usuarioId),
+                new MySqlParameter("@ultimologin", DateTime.UtcNow)
             });
         }
         catch (Exception ex)
@@ -155,8 +155,8 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/IncrementTentativasLogin.sql");
-            var result = await _databaseService.ExecuteScalarAsync(sql, new[] { new MySqlParameter("@usuario_id", usuarioId) });
+            var sql = _sqlLoader.GetQuery("Auth", "IncrementTentativasLogin");
+            var result = await _databaseService.ExecuteScalarAsync(sql, new[] { new MySqlParameter("@usuarioid", usuarioId) });
             return Convert.ToInt32(result);
         }
         catch (Exception ex)
@@ -170,8 +170,8 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/ResetTentativasLogin.sql");
-            await _databaseService.ExecuteNonQueryAsync(sql, new[] { new MySqlParameter("@usuario_id", usuarioId) });
+            var sql = _sqlLoader.GetQuery("Auth", "ResetTentativasLogin");
+            await _databaseService.ExecuteNonQueryAsync(sql, new[] { new MySqlParameter("@usuarioid", usuarioId) });
         }
         catch (Exception ex)
         {
@@ -184,14 +184,14 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/LogTentativaLogin.sql");
+            var sql = _sqlLoader.GetQuery("Auth", "LogTentativaLogin");
             await _databaseService.ExecuteNonQueryAsync(sql, new[]
             {
                 new MySqlParameter("@login", login),
                 new MySqlParameter("@sucesso", success),
-                new MySqlParameter("@ip_address", ipAddress),
-                new MySqlParameter("@user_agent", userAgent),
-                new MySqlParameter("@data_tentativa", DateTime.UtcNow)
+                new MySqlParameter("@ipaddress", ipAddress),
+                new MySqlParameter("@useragent", userAgent),
+                new MySqlParameter("@datatentativa", DateTime.UtcNow)
             });
         }
         catch (Exception ex)
@@ -204,12 +204,12 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/UpdateSenha.sql");
+            var sql = _sqlLoader.GetQuery("Auth", "UpdateSenha");
             await _databaseService.ExecuteNonQueryAsync(sql, new[]
             {
-                new MySqlParameter("@usuario_id", usuarioId),
-                new MySqlParameter("@senha_hash", newPasswordHash),
-                new MySqlParameter("@data_atualizacao", DateTime.UtcNow)
+                new MySqlParameter("@usuarioid", usuarioId),
+                new MySqlParameter("@senhahash", newPasswordHash),
+                new MySqlParameter("@dataatualizacao", DateTime.UtcNow)
             });
         }
         catch (Exception ex)
@@ -223,12 +223,12 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/UpdatePrimeiroAcesso.sql");
+            var sql = _sqlLoader.GetQuery("Auth", "UpdatePrimeiroAcesso");
             await _databaseService.ExecuteNonQueryAsync(sql, new[]
             {
-                new MySqlParameter("@usuario_id", usuarioId),
-                new MySqlParameter("@primeiro_acesso", firstAccess),
-                new MySqlParameter("@data_atualizacao", DateTime.UtcNow)
+                new MySqlParameter("@usuarioid", usuarioId),
+                new MySqlParameter("@primeiroacesso", firstAccess),
+                new MySqlParameter("@dataatualizacao", DateTime.UtcNow)
             });
         }
         catch (Exception ex)
@@ -242,7 +242,7 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/GetUsuariosAtivos.sql");
+            var sql = _sqlLoader.GetQuery("Auth", "GetUsuariosAtivos");
             var dataTable = await _databaseService.ExecuteQueryAsync(sql);
 
             var usuarios = new List<Usuario>();
@@ -264,7 +264,7 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/CheckLoginExists.sql");
+            string sql;
             var parameters = new List<MySqlParameter>
             {
                 new("@login", login)
@@ -272,8 +272,12 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 
             if (excludeUserId.HasValue)
             {
-                sql = await _sqlLoader.LoadSqlAsync("Auth/CheckLoginExistsExcludeUser.sql");
+                sql = _sqlLoader.GetQuery("Auth", "CheckLoginExistsExcludeUser");
                 parameters.Add(new MySqlParameter("@exclude_user_id", excludeUserId.Value));
+            }
+            else
+            {
+                sql = _sqlLoader.GetQuery("Auth", "CheckLoginExists");
             }
 
             var result = await _databaseService.ExecuteScalarAsync(sql, parameters.ToArray());
@@ -290,7 +294,7 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
         try
         {
-            var sql = await _sqlLoader.LoadSqlAsync("Auth/CheckEmailExists.sql");
+            string sql;
             var parameters = new List<MySqlParameter>
             {
                 new("@email", email)
@@ -298,8 +302,12 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 
             if (excludeUserId.HasValue)
             {
-                sql = await _sqlLoader.LoadSqlAsync("Auth/CheckEmailExistsExcludeUser.sql");
+                sql = _sqlLoader.GetQuery("Auth", "CheckEmailExistsExcludeUser");
                 parameters.Add(new MySqlParameter("@exclude_user_id", excludeUserId.Value));
+            }
+            else
+            {
+                sql = _sqlLoader.GetQuery("Auth", "CheckEmailExists");
             }
 
             var result = await _databaseService.ExecuteScalarAsync(sql, parameters.ToArray());

@@ -16,7 +16,6 @@ namespace API.Repositories.Base
             _logger = logger;
         }
 
-        // Métodos abstratos que cada repositório deve implementar
         protected abstract string TableName { get; }
         protected abstract string IdColumn { get; }
         protected abstract T MapFromDataRow(DataRow row);
@@ -140,7 +139,7 @@ namespace API.Repositories.Base
             }
         }
 
-        public virtual async Task<bool> DeleteAsync(int id)
+        public virtual async Task<bool> DeleteAsync(string id)
         {
             try
             {

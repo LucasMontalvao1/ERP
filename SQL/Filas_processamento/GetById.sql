@@ -1,0 +1,1 @@
+﻿SELECT * FROM filas_processamento WHERE id = @id;

@@ -47,7 +47,8 @@ namespace API.Extensions
                 c.SwaggerDoc(ApiConstants.ApiVersion, new OpenApiInfo
                 {
                     Title = ApiConstants.ApiName,
-                    Version = ApiConstants.ApiVersion
+                    Version = ApiConstants.ApiVersion,
+                    Description = "API ERP com integração SalesForce, processamento assíncrono e webhooks"
                 });
 
                 // Configuração para autenticação JWT no Swagger
@@ -83,6 +84,9 @@ namespace API.Extensions
                 {
                     c.IncludeXmlComments(xmlPath);
                 }
+
+                // Adicionar tags para organizar endpoints
+                c.TagActionsBy(api => new[] { api.GroupName ?? api.ActionDescriptor.RouteValues["controller"] });
             });
 
             return services;
@@ -93,7 +97,7 @@ namespace API.Extensions
         /// </summary>
         public static IServiceCollection AddMappingConfiguration(this IServiceCollection services)
         {
-            // services.AddAutoMapper(typeof(Program));
+            services.AddAutoMapper(typeof(Program));
             return services;
         }
 
@@ -102,10 +106,6 @@ namespace API.Extensions
         /// </summary>
         public static IServiceCollection AddValidationConfiguration(this IServiceCollection services)
         {
-            // services.AddFluentValidationAutoValidation();
-            // services.AddFluentValidationClientsideAdapters();
-            // services.AddValidatorsFromAssemblyContaining<Program>();
-
             return services;
         }
 
@@ -116,10 +116,8 @@ namespace API.Extensions
         {
             services.AddScoped<SqlLoader>();
 
-            // Registrar os arquivos SQL
             SqlLoader.RegisterSqlFiles(services);
 
-            // Configuração do Database Service
             services.AddScoped<IDatabaseService, MySqlDatabaseService>();
 
             return services;
@@ -141,11 +139,9 @@ namespace API.Extensions
                 throw new InvalidOperationException("Redis connection string não configurada no appsettings.json");
             }
 
-            // Verificar se o cache está habilitado
             var cacheConfig = configuration.GetSection("Cache").Get<CacheConfiguration>();
             if (cacheConfig?.EnableCache != true)
             {
-                // Se cache desabilitado, registrar implementação vazia
                 services.AddSingleton<ICacheService, NullCacheService>();
                 return services;
             }
@@ -198,9 +194,6 @@ namespace API.Extensions
         /// </summary>
         public static IServiceCollection AddRepositoryConfiguration(this IServiceCollection services)
         {
-            // services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            // services.AddScoped<IProdutoRepository, ProdutoRepository>();
-
             return services;
         }
 
@@ -209,9 +202,6 @@ namespace API.Extensions
         /// </summary>
         public static IServiceCollection AddServiceConfiguration(this IServiceCollection services)
         {
-            // services.AddScoped<IUsuarioService, UsuarioService>();
-            // services.AddScoped<IProdutoService, ProdutoService>();
-
             return services;
         }
 
@@ -227,11 +217,33 @@ namespace API.Extensions
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
+
+                options.AddPolicy("IntegrationPolicy",
+                    builder => builder
+                        .WithOrigins("https://api.salesforce.com", "https://webhook.site")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
             });
 
             return services;
         }
 
+        /// <summary>
+        /// Adiciona autorização com políticas
+        /// </summary>
+        public static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole(ApiConstants.UserRoles.Admin));
+                options.AddPolicy("ManagerOrAbove", policy => policy.RequireRole(ApiConstants.UserRoles.Admin, ApiConstants.UserRoles.Manager));
+                options.AddPolicy("UserAccess", policy => policy.RequireAuthenticatedUser());
+                options.AddPolicy("IntegrationAccess", policy => policy.RequireClaim("integration", "true"));
+            });
+
+            return services;
+        }
 
         /// <summary>
         /// Implementação de cache nulo para quando cache está desabilitado

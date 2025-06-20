@@ -36,7 +36,6 @@ namespace API.Middlewares
             var response = context.Response;
             response.ContentType = "application/json";
 
-            // Definir código de status e mensagem de erro com base no tipo de exceção
             var (statusCode, message) = GetStatusCodeAndMessage(exception);
             response.StatusCode = (int)statusCode;
 
@@ -45,8 +44,6 @@ namespace API.Middlewares
             {
                 Status = (int)statusCode,
                 Message = message,
-                // Em desenvolvimento, inclua detalhes da exceção
-                // Em produção, omita detalhes para evitar vazamento de informações
                 Detail = context.RequestServices.GetRequiredService<IWebHostEnvironment>().IsDevelopment()
                     ? exception.ToString()
                     : null
@@ -58,10 +55,8 @@ namespace API.Middlewares
 
         private (HttpStatusCode statusCode, string message) GetStatusCodeAndMessage(Exception exception)
         {
-            // Aqui você pode mapear tipos específicos de exceção para códigos de status HTTP
             return exception switch
             {
-                // Por exemplo, para validações com FluentValidation
                 FluentValidation.ValidationException validationException =>
                     (HttpStatusCode.BadRequest, "Erro de validação: " + string.Join(", ",
                         validationException.Errors.Select(e => e.ErrorMessage))),

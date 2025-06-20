@@ -1,0 +1,1 @@
+﻿DELETE FROM filas_processamento WHERE id = @id;

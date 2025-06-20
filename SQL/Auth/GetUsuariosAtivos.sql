@@ -3,14 +3,14 @@
     nome,
     login,
     email,
-    senha_hash,
+    senhahash,
     ativo,
-    data_criacao,
-    data_atualizacao,
-    ultimo_login,
-    tentativas_login,
-    data_bloqueio,
-    primeiro_acesso
+    datacriacao,
+    dataatualizacao,
+    ultimologin,
+    tentativaslogin,
+    databloqueio,
+    primeiroacesso
 FROM usuarios 
 WHERE ativo = 1
 ORDER BY nome;

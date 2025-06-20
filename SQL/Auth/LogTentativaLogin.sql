@@ -1,13 +1,13 @@
-﻿INSERT INTO log_login_tentativas (
+﻿INSERT INTO logLoginTentativas (
     login,
     sucesso,
-    ip_address,
-    user_agent,
-    data_tentativa
+    ipaddress,
+    useragent,
+    datatentativa
 ) VALUES (
     @login,
     @sucesso,
-    @ip_address,
-    @user_agent,
-    @data_tentativa
+    @ipaddress,
+    @useragent,
+    @datatentativa
 );

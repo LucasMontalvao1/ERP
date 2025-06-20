@@ -1,0 +1,1 @@
+﻿SELECT * FROM configuracoes_integracao WHERE id = @id;
